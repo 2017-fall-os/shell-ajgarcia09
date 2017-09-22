@@ -5,4 +5,8 @@
 char * concatStrings(char * str1, char *str2);
 //comment
 
+/*looks for the specified command in the
+  list of commands*/
+int findCommand(char * command);
+
 #endif
