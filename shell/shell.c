@@ -44,9 +44,13 @@ int main(int argc, char **argv, char **envp){
       command = inputList[0];
       printf("found command: %s\n", command);
     }
-    else{
-      printf("did not find inputList[0]: %s\n", inputList[0]);
-    }
+    //search in all paths
+      // printf("did not find inputList[0]: %s\n", inputList[0]);
+    //else{
+      char * pathList = getenv("PATH");
+      printf("pathList is: %s\n", pathList);
+      char ** pathTokens = mytoc(pathList, ':');
+      // }
  
   }
 }
