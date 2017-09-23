@@ -3,7 +3,7 @@
 #include "shell.h"
 #include <sys/types.h>//for read
 #include <unistd.h>//for read
-#include <sys/stat.h>//for read
+#include <sys/stat.h>//for stat
 #include <fcntl.h> //for read
 
 #define BUFLEN 1024
@@ -12,9 +12,14 @@ int findCommand(char * command){
   printf("entered findCommand\n");
   struct stat buffer;
   //if successful, stat will return 0
-  int status = stat(command, &buffer);
-  printf("findCommand returns: %d\n", status);
-  return status;
+  if(stat(command, &buffer) == 0 && buffer.st_mode & S_IXOTH){
+    printf("found command!\n");
+    return 1; //found executable
+  }
+  else{
+    printf("didn't find executable :( \n");
+    return 0; //didn't find executable    
+  }
 }
 
 
@@ -22,7 +27,7 @@ int findCommand(char * command){
   variables used to find the PATH variable.*/
 
 int main(int argc, char **argv, char **envp){
-  int pid = 0;
+  int pid;
   for(;;){
     char input[BUFLEN];
     char * command;
@@ -35,7 +40,7 @@ int main(int argc, char **argv, char **envp){
     //tokenize input string
     char ** inputList = mytoc(input, ' ');
     printf("inputList[0] :%s\n", inputList[0]);
-    if(findCommand(inputList[0]) == 0){ //if search succeeded
+    if(findCommand(inputList[0])){ //if search succeeded
       command = inputList[0];
       printf("found command: %s\n", command);
     }
