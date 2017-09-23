@@ -22,7 +22,38 @@ int findCommand(char * command){
   }
 }
 
+char * concatStrings(char *str1, char * str2){
+  //measure length of str1
+  int i = 0;
+  for(; str1[i]; i++);
+  printf("length of str1: %d\n", i);
 
+  int j = 0;
+  //measure length of str2
+  for(; str2[j]; j++);
+  printf("length of str2: %d\n", j);
+
+  char newString[i+j+2];
+
+  int k =0;
+  while(*str1){
+    newString[k] = *str1;
+    str1++;
+    k++;
+  }
+  newString[k] = '/';
+  k++;
+  while(*str2){
+    newString[k] = *str2;
+    str2++;
+    k++;
+  }
+  newString[k] = '\0';
+  printf("newString is: %s\n", newString);
+  return newString;
+}
+  
+ 
 /*argc, argv and envp are used to get environment
   variables used to find the PATH variable.*/
 
@@ -51,6 +82,10 @@ int main(int argc, char **argv, char **envp){
       printf("pathList is: %s\n", pathList);
       char ** pathTokens = mytoc(pathList, ':');
       // }
+      char * name = "Ana";
+      char * lastName = "Banana";
+
+      concatStrings(name, lastName);
  
   }
 }
