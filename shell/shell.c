@@ -59,6 +59,8 @@ char * concatStrings(char *str1, char * str2){
 
 int main(int argc, char **argv, char **envp){
   int pid;
+  int waitValue;
+  int waitStatus;
   for(;;){
     char input[BUFLEN];
     char * command;
@@ -70,22 +72,38 @@ int main(int argc, char **argv, char **envp){
     }
     //tokenize input string
     char ** inputList = mytoc(input, ' ');
+    int foundCommand = 0;
     printf("inputList[0] :%s\n", inputList[0]);
     if(findCommand(inputList[0])){ //if search succeeded
       command = inputList[0];
+      foundCommand = 1;
       printf("found command: %s\n", command);
     }
     //search in all paths
-      // printf("did not find inputList[0]: %s\n", inputList[0]);
-    //else{
+    else{
       char * pathList = getenv("PATH");
       printf("pathList is: %s\n", pathList);
       char ** pathTokens = mytoc(pathList, ':');
-      // }
-      char * name = "Ana";
-      char * lastName = "Banana";
-
-      concatStrings(name, lastName);
- 
+      for(int i =0; pathTokens[i]; i++){
+	char * currentCommand = concatStrings(pathTokens[i],inputList[0]);
+	if(findCommand(currentCommand)){
+	  command = currentCommand;
+	  break;
+	}
+      }
+    }
+    printf("foundCommand : %d\n", foundCommand);
+   if(foundCommand == 0){
+      printf("Command Not Found: %s\n", command);
+    }
+    pid = fork();
+    if(pid == 0){ //if the child process is running
+      execve(command,inputList,envp);
+    }
+    else{
+      
+      waitValue = waitpid(pid, &waitStatus, 0);//wait until the child process ends
+    }
+    }
   }
-}
+
