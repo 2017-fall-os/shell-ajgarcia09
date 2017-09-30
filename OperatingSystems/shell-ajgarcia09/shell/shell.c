@@ -25,21 +25,22 @@ char * concatStrings(char * str1, char * str2){
   int newStringSize =lengthOfTokenArray(str1)+lengthOfTokenArray(str2)+2;
   printf("newStringSize %d\n", newStringSize);
   char * newStr = malloc(newStringSize);
-  while(*str1){
-    *newStr = *str1;
-    printf("current newStr %c\n", *newStr); 
-    str1++;
-    newStr++;
+  int i =0;  
+  while(str1[i]){
+    newStr[i] = str1[i];
+    printf("current newStr: %c\n", newStr[i]);
+    i++;
   }
-  //*newStr = '/';
-  //newStr++;
-  while(*str2){
-    *newStr = *str2;
-    printf("current newStr %c\n", *newStr);
-    str2++;
-    newStr++;
+  newStr[i] = '/'; 
+  i++;
+  int j =0;
+  while(str2[j]){
+    newStr[i] = str2[j];
+    printf("current newStr: %c\n", newStr[j]);
+    j++;
+    i++;
   }
-  *newStr = '\0';
+  newStr[i] = '\0';
   printf("newStr: %s\n", newStr);
   return newStr;
 }
@@ -67,8 +68,8 @@ char ** getPathList(char ** envp){
 int main(int argc, char **argv, char **envp){
   for(;;){
     char input[BUFLEN];
-    char * pathConcat;
     char * command;
+    char * command2;
     write(1,"[ajgarcia09 shell]$ ",19);
     int numBytesRead = read(0,input,BUFLEN);
     input[numBytesRead-1] = '\0'; //remove new line char
@@ -86,9 +87,12 @@ int main(int argc, char **argv, char **envp){
      printf("didn't find command %s\n", inputList[0]);
      char ** path = getPathList(envp);
      for(int i =0; path[i]; i++){
-       pathConcat = concatStrings(path[i],"/");
-       //command = concatStrings(pathConcat,inputList[0]);
-	 printf("pathConcat is: %s\n",pathConcat);
+       command = concatStrings(path[i],inputList[0]);
+       printf("command: %s\n", command);
+       
+       //printf("new inputList[0]: %s\n",inputList[0]);
+       // command2 = concatStrings(command,inputList[0]);
+       //printf("command2 %s\n",command2);
     }
 
   pid_t  pid = fork();
