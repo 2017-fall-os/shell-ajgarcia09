@@ -61,6 +61,20 @@ char ** getPathList(char ** envp){
   return path;
   }
 
+char ** updateInputList(char ** inputList, char * command){
+  int commandSize = lengthOfTokenArray(command); //+ null char
+  inputList[0] = '\0';
+  inputList[0] = malloc(commandSize+1);
+  int i =0;
+  for(; i < commandSize; i++){
+    inputList[0][i] = command[i];
+  }
+  inputList[0][i] = '\0';
+  return inputList;
+
+}
+    
+
 
   /*argc, argv and envp are used to get environment
   variables used to find the PATH variable.*/
@@ -69,7 +83,6 @@ int main(int argc, char **argv, char **envp){
   for(;;){
     char input[BUFLEN];
     char * command;
-    char * command2;
     write(1,"[ajgarcia09 shell]$ ",19);
     int numBytesRead = read(0,input,BUFLEN);
     input[numBytesRead-1] = '\0'; //remove new line char
@@ -80,16 +93,29 @@ int main(int argc, char **argv, char **envp){
    char ** inputList = mytoc(input, ' ');
    //absolute path was entered
    if(access(inputList[0], X_OK) == 0){
-     command = inputList[0];
+     char * command = inputList[0];
      printf("found command: %s\n",command);
+     execve(command,inputList,envp);
+     free(command);
    }
    else{//search for command in path list
      printf("didn't find command %s\n", inputList[0]);
      char ** path = getPathList(envp);
+     int sizeOfInputListIndex = lengthOfTokenArray(inputList[0]);
+     char * temp = (char*)malloc(sizeOfInputListIndex+1);
+     for(int i = 0; i < sizeOfInputListIndex; i++){
+       if(i == (sizeOfInputListIndex -1)){
+	   temp[i] = '\0';
+	 }
+	 temp[i] = inputList[0][i];
+      }
+     
      for(int i =0; path[i]; i++){
-       command = concatStrings(path[i],inputList[0]);
+       command = concatStrings( path[i],temp);
        printf("command: %s\n", command);
-       
+       inputList = updateInputList(inputList,command);
+       execve(command,inputList,envp);
+       free(command);
        //printf("new inputList[0]: %s\n",inputList[0]);
        // command2 = concatStrings(command,inputList[0]);
        //printf("command2 %s\n",command2);
