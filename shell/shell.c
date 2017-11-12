@@ -10,12 +10,42 @@
 
 #define BUFLEN 1024
 
+
 void readInput(char * input){
     write(1,"[ajgarcia09 shell]$ ",19);
     int numBytesRead = read(0,input,BUFLEN);
     input[numBytesRead-1] = '\0'; //remove new line char*/
 }
 
+void forkIt(char ** envp, char ** inputList){
+  //printf("in forkIt\n");
+  int pid = fork();
+   if(pid == 0){
+     execve(inputList[0],inputList,envp);
+
+     //if it's not an absolute path, look in PATH variable
+     char ** path = getPathList(envp);
+     int sizeOfInputListIndex = lengthOfCharArray(inputList[0]);
+     char * temp = (char*)malloc(sizeOfInputListIndex+1);
+     for(int i = 0; i < sizeOfInputListIndex; i++){
+       if(i == (sizeOfInputListIndex -1)){
+         temp[i] = '\0';
+       }
+         temp[i] = inputList[0][i];
+      }
+      for(int i =0; path[i]; i++){
+        char * command = concatStrings( path[i],temp);
+        inputList = updateInputList(inputList,command);
+        execve(command,inputList,envp);
+	// free(command);
+      }     
+   }
+   else{
+     wait(NULL);
+     }
+}
+
+  
 void freeTokens(char ** tokenVec){
   while(*tokenVec){
     free(*tokenVec);
