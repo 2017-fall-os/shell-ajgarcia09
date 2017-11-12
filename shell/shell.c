@@ -8,6 +8,13 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 
+#define BUFLEN 1024
+
+void readInput(char * input){
+    write(1,"[ajgarcia09 shell]$ ",19);
+    int numBytesRead = read(0,input,BUFLEN);
+    input[numBytesRead-1] = '\0'; //remove new line char*/
+}
 
 void freeTokens(char ** tokenVec){
   while(*tokenVec){

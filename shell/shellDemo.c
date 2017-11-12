@@ -13,12 +13,10 @@
   variables used to find the PATH variable.*/
 
 int main(int argc, char **argv, char **envp){
+  char input[BUFLEN];
   for(;;){
-    char input[BUFLEN];
     char * command;
-    write(1,"[ajgarcia09 shell]$ ",19);
-    int numBytesRead = read(0,input,BUFLEN);
-    input[numBytesRead-1] = '\0'; //remove new line char*/
+    readInput(input);
     if(compStrings(input,"exit")==1){
       break;  //exit program
     }
