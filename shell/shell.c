@@ -25,7 +25,7 @@ char * concatStrings(char * str1, char * str2){
   int i =0;  
   while(str1[i]){
     newStr[i] = str1[i];
-    i++;
+   i++;
   }
   newStr[i] = '/'; 
   i++;
@@ -70,6 +70,7 @@ char ** updateInputList(char ** inputList, char * command){
 
 int main(int argc, char **argv, char **envp){
 while(1){
+  printf("start of while\n");
     char input[BUFLEN];
     char * command;
     write(1,"[ajgarcia09 shell]$ ",19);
@@ -84,11 +85,11 @@ while(1){
    if(access(inputList[0], X_OK) == 0){
     char * command = inputList[0];
     int pid =  fork();
-   if(pid ==0){
+    if(pid ==0){ //if parent is running
       execve(command,inputList,envp);
       free(command);
    }
-   else{
+    else{ //wait on the child
      wait(NULL);
    }
 }
@@ -106,32 +107,34 @@ while(1){
      for(int i =0; path[i]; i++){
        char * command = concatStrings( path[i],temp);
        inputList = updateInputList(inputList,command);
-int pid = fork();
-if(pid == 0){
-execve(command,inputList,envp);
-    free(command);
+       int pid = fork();
+       if(pid == 0){
+           execve(command,inputList,envp);
+       free(command);
      }
  else{
    wait(NULL);
   }
-}
-printf("about to fork\n");
+ }
+    
+     //printf("about to fork\n");
 int pid = fork();
-printf("forking with pid:%d\n",pid);
+//printf("forking with pid:%d\n",pid);
    if(pid == 0){ //child is running
-       printf("child is running\n");
+     //printf("child is running\n");
        execve(command, inputList,envp);
         }
      else{
        wait(NULL); //wait for the child to finish
-       printf("parent is running\n");
+       // printf("parent is running\n");
        freeTokens(inputList);
        free(inputList);
      }
    }
   printf("End \n");
+  }
 }
-}
+   
      
 
        
