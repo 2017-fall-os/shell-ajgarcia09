@@ -7,6 +7,6 @@ void freeTokens(char ** tokenVec);
 
 char * concatStrings(char *str1, char * str2);
 
-
+char ** updateInputList(char ** inputList, char * command);
 
 #endif
