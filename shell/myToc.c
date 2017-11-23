@@ -9,6 +9,10 @@
 
 #define BUFLEN 1024
 
+/*Counts how many words are in the user input.
+Works with strings that have multiple spaces in between words:
+ "Hello    World" yields wordCount = 2
+*/
 int countWords(char * str, char delim){
   int wordCount = 0;
   while(*str){
@@ -25,9 +29,9 @@ int countWords(char * str, char delim){
   return wordCount;
  }
 
-char * copyToken(char *str, int tokLength){
-  /*copy each character from the current
+/*Copies each character from the current
     token in str into strCopy*/
+char * copyToken(char *str, int tokLength){
   char * strCopy = (char *)malloc(tokLength +1);
   for(int i = 0; i< tokLength; i++){
     strCopy[i] = str[i];
@@ -36,45 +40,31 @@ char * copyToken(char *str, int tokLength){
   return strCopy;
   
 }
- 
-char ** allocateTokens(char ** tokenVec, char *str, char delim){
 
-  int tokLength =0;
-  int tokNum=0;
-  char * temp;
- while(*str){
-    if(*str != delim){
-      tokLength++;
-    }
-    //found a delimiter
-    else{
-    temp = str-tokLength;    
-    //storage for current token    
-    tokenVec[tokNum] = (char *)malloc(tokLength+1);
-    //and its 0 char terminator
-    tokenVec[tokNum][tokLength] = '\0';
-    tokenVec[tokNum] = copyToken(temp,tokLength);
-    tokNum++; //go to the next token
-    tokLength = 0; //reset token length
-    }
-    str++; //go to the next index
+/*Deletes the initial spaces at the beginning of each token:
+    "   Ana" becomes "Ana"
+*/
+char * trimInitialSpaces(char * str){
+  while(*str == ' '){
+    str++;
   }
+  return str;
+ }
 
- //allocate the token before the null terminating index
-    temp = str-tokLength;    
-    //storage for current token    
-    tokenVec[tokNum] = (char *)malloc(tokLength+1);
-    //and its 0 char terminator
-    tokenVec[tokNum][tokLength] ='\0';
-    tokenVec[tokNum] = copyToken(temp,tokLength);
-    return tokenVec;
-}
+/*Allocates space for a token and copies it into an array 
+  that will go into an index of tokenVec*/
+char * allocateToken(char * token, char delim, int tokenSize){
 
-/*Used for calculating the length of the 
-current token array from tokenVec 
-that we want to print using printTokenVec*/
- 
-int lengthOfTokenArray(char * str){
+  //allocate space for the token
+  char * tokenVecIndex = (char *)malloc(tokenSize +1);
+  tokenVecIndex[tokenSize] = '\0'; //zero terminator
+  tokenVecIndex = copyToken(token, tokenSize);
+  return tokenVecIndex;
+  }
+     
+//Calculates the length of the each token in order to print it
+
+int lengthOfCharArray(char * str){
   int length = 0;
   while(*str){
     length++; //increment counter while the string isn't empty
@@ -83,18 +73,33 @@ int lengthOfTokenArray(char * str){
   return length;
  }
 
-/*print each token in a new line */
+/*Get the number of chars before each space:
+  token: "Ana "
+  tokenSize = 3
+*/
 
+ int getTokenSize(char *token){
+   int tokenSize = 0;
+       while(*token != ' '){
+	 tokenSize++;
+	 token++;
+         }
+       return tokenSize;
+     }
+		    
+/*Print each token in a new line */
 void printTokenVec(char ** tokenVec, int wordCount){
   int numBytes = 0;
   for(int i = 0; i < wordCount; i++){
-    numBytes = lengthOfTokenArray(tokenVec[i]);
+    numBytes = lengthOfCharArray(tokenVec[i]);
      write(1,tokenVec[i],numBytes);
      write(1, "\n", 1);
     }
   }
 
- int compStrings(char *str1,char  *str2){
+/*Returns 1 if two strings are equal.
+  Used to exit the program*/
+int compStrings(char *str1,char  *str2){
 
    while(*str1 && *str2){
      if(*str1 != *str2){
@@ -106,14 +111,22 @@ void printTokenVec(char ** tokenVec, int wordCount){
    return 1;
  }
 
+
+/*Allocates each token in an array and
+  returns a pointer to this array*/ 
  char ** mytoc(char *str, char delim){
 
  int wordCount = countWords(str, delim);
- 
+ //printf("wordCount: %d\n", wordCount);
  char** tokenVec = (char **)calloc(wordCount+1,sizeof(char *));
  tokenVec[wordCount] = (char *)0;//zero pointer terminator
- tokenVec = allocateTokens(tokenVec, str, delim);
- printTokenVec(tokenVec,wordCount);
-  
- return tokenVec; 
+ //printf("right before for loop\n");
+ for(int i = 0; i < wordCount; i++){
+   char * token = trimInitialSpaces(str);
+   int tokenSize = getTokenSize(token);
+   tokenVec[i] = allocateToken(token,delim, tokenSize);
+   str = token + tokenSize;
+ }
+  printTokenVec(tokenVec,wordCount);
+  return tokenVec; 
 }
