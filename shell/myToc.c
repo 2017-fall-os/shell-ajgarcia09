@@ -44,10 +44,13 @@ char * copyToken(char *str, int tokLength){
 /*Deletes the initial spaces at the beginning of each token:
     "   Ana" becomes "Ana"
 */
-char * trimInitialSpaces(char * str){
-  while(*str == ' '){
+char * trimInitialDelim(char * str, char delim){
+  //printf("in trimInitialDelim\n");
+  //printf("str: %s\n", str);
+while(*str == delim){
     str++;
   }
+//printf("about to return this str: %s\n", str);
   return str;
  }
 
@@ -78,12 +81,17 @@ int lengthOfCharArray(char * str){
   tokenSize = 3
 */
 
- int getTokenSize(char *token){
+ int getTokenSize(char *token, char delim){
    int tokenSize = 0;
-       while(*token != ' '){
-	 tokenSize++;
-	 token++;
+       while(*token){
+	 if(*token == delim){
+	   break;
+	 }
+	 else{
+	     tokenSize++;
+	     token++;
          }
+       }
        return tokenSize;
      }
 		    
@@ -122,11 +130,15 @@ int compStrings(char *str1,char  *str2){
  tokenVec[wordCount] = (char *)0;//zero pointer terminator
  //printf("right before for loop\n");
  for(int i = 0; i < wordCount; i++){
-   char * token = trimInitialSpaces(str);
-   int tokenSize = getTokenSize(token);
+   // printf("in for loop\n");
+   char * token = trimInitialDelim(str, delim);
+   //printf("token is: %s", token);
+   int tokenSize = getTokenSize(token,delim);
+   //printf("tokenSize: %d\n", tokenSize);
    tokenVec[i] = allocateToken(token,delim, tokenSize);
    str = token + tokenSize;
  }
-  printTokenVec(tokenVec,wordCount);
+  printf("tokenVec is: \n");
+  //printTokenVec(tokenVec,wordCount);
   return tokenVec; 
 }
