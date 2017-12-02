@@ -5,6 +5,10 @@ char ** getPathList (char ** envp);
 
 void freeTokens(char ** tokenVec);
 
+int checkIfBackgroundProc(char * input);
+
+void removeAmpersand(char * input);
+
 char * concatStrings(char *str1, char * str2);
 
 char ** updateInputList(char ** inputList, char * command);

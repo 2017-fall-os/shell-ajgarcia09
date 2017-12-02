@@ -19,28 +19,30 @@ int main(int argc, char **argv, char **envp){
     if(compStrings(input,"exit")==1){
       break;  //exit program
     }
+
+   /*if(checkIfBackgroundProc(input)){
+     printf("is background!\n");
+     removeAmpersand(input);
+     } */
+    
    //tokenize input string
    char ** inputList = mytoc(input, ' ');
-
+   
+   //command is change directory (cd)
+   if(inputList[0][0] == 'c' && inputList[0][1] == 'd'){
+       chdir(inputList[1]);
+     }
+							 
    if(checkForPipe(input)){
-     // printf("found pipe! :D \n");
      char ** pipeCommands = mytoc(input, '|');
-     //printf("pipeCommands[0]: %s\n", pipeCommands[0]);
-     //printf("pipecommands[1]: %s\n", pipeCommands[1]);
-     
      char ** commandOne = mytoc(pipeCommands[0], ' ');
-     //printf("commandOne[0]: %s\n", commandOne[0]);
      char ** commandTwo = mytoc(pipeCommands[1], ' ');
-     //printf("commandTwo[0]: %s\n",commandTwo[0]);
-     //printf("commandTwo[1]: %s\n", commandTwo[1]);
-     
-     forkPipe(commandOne,commandTwo,envp,inputList); 
-       
+     forkPipe(commandOne,commandTwo,envp,inputList);       
    }
+   
    else{
        forkIt(envp,inputList);
    }
   }
-    
 }
 
