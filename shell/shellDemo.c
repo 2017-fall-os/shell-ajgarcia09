@@ -20,10 +20,13 @@ int main(int argc, char **argv, char **envp){
       break;  //exit program
     }
 
-   /*if(checkIfBackgroundProc(input)){
+   if(checkIfBackgroundProc(input)){
      printf("is background!\n");
      removeAmpersand(input);
-     } */
+     printf("new input: %s\n",input);
+     char ** backgroundCommands = mytoc(input, ' ');
+     runItInBackground(envp,backgroundCommands);
+     }
     
    //tokenize input string
    char ** inputList = mytoc(input, ' ');

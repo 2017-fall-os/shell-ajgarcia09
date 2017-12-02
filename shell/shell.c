@@ -17,6 +17,26 @@ void readInput(char * input){
     input[numBytesRead-1] = '\0'; //remove new line char*/
 }
 
+void removeAmpersand(char * input){
+  while(*input){
+    if(*input == '&'){
+      *input = '\0';
+      return;
+    }
+    input++;
+  }
+  }
+
+//checks if the command entered is a background process
+int checkIfBackgroundProc(char * input){
+  while(*input){
+    if(*input == '&'){
+      return 1;
+    }
+    input++;
+  }
+  return 0;
+}
 
 //checks if the user entered a command that uses a pipe
 int checkForPipe(char *input){
@@ -61,8 +81,21 @@ void forkPipe(char ** commandOne, char ** commandTwo, char **envp, char ** input
    }
   }
 }
-  
 
+void runItInBackground(char ** envp, char ** backgroundCommands){  
+
+  int process = fork();
+  if(process == 0){ //parent process
+    //if absolute path entered, run it
+    execve(backgroundCommands[0],backgroundCommands, envp);
+    //otherwise look for it in PATH variable
+    runIt(backgroundCommands,envp);
+  }
+  else{
+    return;
+  }
+}
+  
 void runIt(char ** inputList,char ** envp ){
   //if it's not an absolute path, look in PATH variable
      char ** path = getPathList(envp);
@@ -83,7 +116,6 @@ void runIt(char ** inputList,char ** envp ){
 }
 
 void forkIt(char ** envp, char ** inputList){
-  //printf("in forkIt\n");
   int pid = fork();
    if(pid == 0){
      execve(inputList[0],inputList,envp);
@@ -95,7 +127,6 @@ void forkIt(char ** envp, char ** inputList){
      wait(NULL); //wait on the child
      }
 }
-
   
 void freeTokens(char ** tokenVec){
   while(*tokenVec){
