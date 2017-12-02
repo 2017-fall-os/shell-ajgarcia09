@@ -29,25 +29,8 @@ int checkForPipe(char *input){
   return 0;
 }
 
-/*void findCommandInPath(char ** envp, char **inputList){
-   char ** path = getPathList(envp);
-     int sizeOfInputListIndex = lengthOfCharArray(inputList[0]);
-     char * temp = (char*)malloc(sizeOfInputListIndex+1);
-     for(int i = 0; i < sizeOfInputListIndex; i++){
-       if(i == (sizeOfInputListIndex -1)){
-         temp[i] = '\0';
-       }
-         temp[i] = inputList[0][i];
-      }
-      for(int i =0; path[i]; i++){
-        char * command = concatStrings( path[i],temp);
-        inputList = updateInputList(inputList,command);
-        execve(command,inputList,envp);
-	// free(command);
-      }     
-      }*/
 /*function is a modification of Dr. Freudenthal's forkPipeDemo.c*/
-void forkPipe(char ** commandOne, char ** commandTwo, char ** path, char **envp){
+void forkPipe(char ** commandOne, char ** commandTwo, char **envp, char ** inputList){
   int * pipeFds = (int *)calloc(2,sizeof(int)); //pipe file descriptors
   pipe(pipeFds);
   int pid = fork();
@@ -59,25 +42,32 @@ void forkPipe(char ** commandOne, char ** commandTwo, char ** path, char **envp)
     close(pipeFds[0]);
     close(pipeFds[1]);
     //run the command
+    runIt(commandOne,envp);
+    exit(2);
+  }
+  else{
+      wait(NULL);//wait on the child
+      int pid2 = fork();   
+      if(pid2 ==0){
+          close(0); //close file descriptor 0
+          dup(pipeFds[0]);
+          close(pipeFds[0]);
+          close(pipeFds[1]);
+          //run the command
+          runIt(commandTwo, envp);
+      }
+   else{
+     wait(NULL);//wait on the child
+   }
   }
 }
   
-  
-  
 
-void forkIt(char ** envp, char ** inputList){
-  //printf("in forkIt\n");
-  int pid = fork();
-   if(pid == 0){
-     execve(inputList[0],inputList,envp);
-
-     //if it's not an absolute path, look in PATH variable
+void runIt(char ** inputList,char ** envp ){
+  //if it's not an absolute path, look in PATH variable
      char ** path = getPathList(envp);
-     //printf("finished with path array\n");
      int sizeOfInputListIndex = lengthOfCharArray(inputList[0]);
-     //printf("sizeOfInputListIndex: %d\n", sizeOfInputListIndex);
      char * temp = (char*)malloc(sizeOfInputListIndex+1);
-     //printf("malloced temp!\n");
      for(int i = 0; i < sizeOfInputListIndex; i++){
        if(i == (sizeOfInputListIndex -1)){
          temp[i] = '\0';
@@ -90,9 +80,19 @@ void forkIt(char ** envp, char ** inputList){
         execve(command,inputList,envp);
 	free(command);
 	}     
-   }
+}
+
+void forkIt(char ** envp, char ** inputList){
+  //printf("in forkIt\n");
+  int pid = fork();
+   if(pid == 0){
+     execve(inputList[0],inputList,envp);
+
+     //if it's not an absolute path, look in PATH variable
+     runIt(inputList,envp);
+     }
    else{
-     wait(NULL);
+     wait(NULL); //wait on the child
      }
 }
 
@@ -125,22 +125,14 @@ char * concatStrings(char * str1, char * str2){
 }
   
 char ** getPathList(char ** envp){
-  //printf("in getPathList\n");
   char ** tokens; 
   for(int i = 0; envp[i]; i++){
-    //printf("currentToken: \n");
     tokens = mytoc(envp[i], '=');
     if(compStrings(tokens[0],"PATH")){
-      //printf("found PATH! breaking\n");
       break;
     }
-    //freeTokens(tokens);
-    // free(tokens);
    }
-  // printf("about to tokenize path\n");
-  // printf("tokens[1]: %s\n", tokens[1]);
   char ** path = mytoc(tokens[1], ':');
-  //printf("Tokenized path! About to return from getPathList\n");
   return path;
   }
 

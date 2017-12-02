@@ -23,17 +23,18 @@ int main(int argc, char **argv, char **envp){
    char ** inputList = mytoc(input, ' ');
 
    if(checkForPipe(input)){
-     printf("found pipe! :D \n");
+     // printf("found pipe! :D \n");
      char ** pipeCommands = mytoc(input, '|');
-     printf("pipeCommands[0]: %s\n", pipeCommands[0]);
-     printf("pipecommands[1]: %s\n", pipeCommands[1]);
+     //printf("pipeCommands[0]: %s\n", pipeCommands[0]);
+     //printf("pipecommands[1]: %s\n", pipeCommands[1]);
      
      char ** commandOne = mytoc(pipeCommands[0], ' ');
-     printf("commandOne[0]: %s\n", commandOne[0]);
+     //printf("commandOne[0]: %s\n", commandOne[0]);
      char ** commandTwo = mytoc(pipeCommands[1], ' ');
-     printf("commandTwo[0]: %s\n",commandTwo[0]);
-     printf("commandTwo[1]: %s\n", commandTwo[1]);
-     //forkPipe(char ** commandOne, char ** commandTwo, char ** path, char **envp);
+     //printf("commandTwo[0]: %s\n",commandTwo[0]);
+     //printf("commandTwo[1]: %s\n", commandTwo[1]);
+     
+     forkPipe(commandOne,commandTwo,envp,inputList); 
        
    }
    else{
