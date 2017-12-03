@@ -1,4 +1,4 @@
-#Shell -ajgarcia09
+##Shell $ajgarcia09
 # source code by Ana J. Garcia
 
 This directory contains:
@@ -6,10 +6,12 @@ This directory contains:
 the system call exeve, and the parent process waits for the child process to terminate before proceeding.
 
 This directory contains:
-    myToc.h: header file with function instantiations
-    myToc.c: implementation of funcions from myToc.h
-    shell.h: header file with function instantiations
+    myToc.h: header file with function instantiations for a tokenizer
+    myToc.c: implementation of funcions from myToc
+    shell.h: header file with function instantiations for my shell
     shell.c: code to execute shell commands using fork(), execve() and wait()
+    shellDemo.c: a test program that runs my shell using
+                 my tokenizer and executes Unix commands.
 
 To compile:
 
@@ -30,10 +32,10 @@ $ make clean
 For the completion of this assignment, I received help from Ulises Martinez to understand the general algorithm to write this program.
 He helped me create the pseudocode I followed in the completion of this assignment.
 
-I helped Hector Cervantes in using the stat struc to check whether an executable file exists.
+I also received helped from Hector Cervantes in executing simple pipes and modularizing my code so that it became more readable and easier to modify.
 
-I used these websites as references for using stat:
+I used the following websites as references to complete my shell:
 
-pubs.opengroup.org/onlinepubs/009695399/functions/stat.html
+To learn about Background Processes:
+    https://www.tutorialspoint.com/unix/unix-processes.htm
 
-https://stackoverflow.com/questions/13098620/using-stat-to-check-if-a-file-is-executable-in-c
