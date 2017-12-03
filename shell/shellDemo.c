@@ -20,32 +20,31 @@ int main(int argc, char **argv, char **envp){
       break;  //exit program
     }
 
-   if(checkIfBackgroundProc(input)){
-     printf("is background!\n");
+    if(checkIfBackgroundProc(input)){ //background process entered
      removeAmpersand(input);
-     printf("new input: %s\n",input);
      char ** backgroundCommands = mytoc(input, ' ');
      runItInBackground(envp,backgroundCommands);
      }
-    
-   //tokenize input string
-   char ** inputList = mytoc(input, ' ');
+   else{ //not a background process
+       //tokenize input string
+       char ** inputList = mytoc(input, ' ');
    
-   //command is change directory (cd)
-   if(inputList[0][0] == 'c' && inputList[0][1] == 'd'){
-       chdir(inputList[1]);
-     }
+       //command is change directory (cd)
+       if(inputList[0][0] == 'c' && inputList[0][1] == 'd'){
+           chdir(inputList[1]);
+         }
 							 
-   if(checkForPipe(input)){
-     char ** pipeCommands = mytoc(input, '|');
-     char ** commandOne = mytoc(pipeCommands[0], ' ');
-     char ** commandTwo = mytoc(pipeCommands[1], ' ');
-     forkPipe(commandOne,commandTwo,envp,inputList);       
-   }
+       if(checkForPipe(input)){
+         char ** pipeCommands = mytoc(input, '|');
+         char ** commandOne = mytoc(pipeCommands[0], ' ');
+         char ** commandTwo = mytoc(pipeCommands[1], ' ');
+         forkPipe(commandOne,commandTwo,envp,inputList);       
+       }
    
-   else{
-       forkIt(envp,inputList);
-   }
-  }
+       else{
+           forkIt(envp,inputList);
+       }
+      }
+    }
 }
 
